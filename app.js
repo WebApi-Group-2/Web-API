@@ -12,7 +12,12 @@ app.use(bodyparser.json({
 
 
 //routes config
+
+const categoryRoutes = require('./routes/categories');
+const itemRoutes = require('./routes/items');
+const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
+const orderRoutes = require('./routes/order');
 
 
 
@@ -20,6 +25,11 @@ const authRoutes = require('./routes/auth');
 //middleware
 app.use(cors());
 app.use('/api/auth',authRoutes);
+app.use('/api/order',orderRoutes);
+app.use('/item',itemRoutes);
+app.use('/category',categoryRoutes);
+app.use('/user',userRoutes);
+
 
 
 mongoose.connect(process.env.DB_CONNECTION,{ 
