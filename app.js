@@ -12,6 +12,10 @@ app.use(bodyparser.json({
 
 
 //routes config
+const postRoutes = require('./routes/post');
+const categoryRoutes = require('./routes/categories');
+const itemRoutes = require('./routes/items');
+const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/order');
 
