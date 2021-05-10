@@ -12,7 +12,7 @@ app.use(bodyparser.json({
 
 
 //routes config
-const postRoutes = require('./routes/post');
+
 const categoryRoutes = require('./routes/categories');
 const itemRoutes = require('./routes/items');
 const userRoutes = require('./routes/users');
@@ -26,6 +26,9 @@ const orderRoutes = require('./routes/order');
 app.use(cors());
 app.use('/api/auth',authRoutes);
 app.use('/api/order',orderRoutes);
+app.use('/item',itemRoutes);
+app.use('/category',categoryRoutes);
+app.use('/user',userRoutes);
 
 
 
