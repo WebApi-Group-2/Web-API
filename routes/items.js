@@ -96,4 +96,25 @@ router.delete("/:id",async(req,res)=>{
 });
 
 
+router.get('/getenableitems' ,async (req,res) => {
+
+    const status = req.query.status;
+    
+ 
+    
+        try{
+           
+
+            const item = await itemModel.find({status:status});
+            res.status(200).json(item)
+    
+        }catch(err){
+            res.status(404).json({message:err})
+        }
+    
+    
+   
+});
+
+
 module.exports = router
