@@ -7,38 +7,7 @@ const verifytoken = require('../tokenVerify');
 
 
 
-router.post('/add', verifytoken,async (req,res) => {
-    
-    const token = req.body.Token;
-    const verify = jwt.verify(token,process.env.TOKEN_SECRET);
-     
-    const order = new Order ({
-        userId : verify._id,
-        TotalAmount : req.body.TotalAmount,
-        itemdetails: req.body.itemdetails,
-        AddressShiping: req.body.AddressShiping,
-      
-    })
-
-   try{
-   const savedone = await order.save()
-    
-   res.status(200).json(savedone);
-
-   
-   
-
-    
-   } catch(err) {
-
-       res.status(404).json({message: err});
-   }
-
-
-  
-    
-   
-});
+//add order
 
 
 router.get('/getorders' ,async (req,res) => {
