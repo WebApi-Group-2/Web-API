@@ -7,6 +7,43 @@ const jwt = require('jsonwebtoken');
 
 // add methods here 
 
+//Registration
+
+router.post('/register',async (req,res) => {
+
+    //check user already exits
+ 
+    const emailExitst = await User.findOne({email:req.body.email})
+ 
+    if(emailExitst) return res.status(400).json({message:"email already exits"})
+     
+     //password hash
+     const bcri = await bcript.genSalt(10);
+     const hashpassword = await bcript.hashSync(req.body.password,bcri);
+ 
+     const user = new User({
+         name : req.body.name,
+         email : req.body.email,
+         IsAdmin: req.body.IsAdmin,
+         password : hashpassword
+     });
+      
+     try {
+         const saveduser = await user.save()
+         res.json(saveduser);
+ 
+     }catch(err) {
+         res.status(400).json(err);
+     }
+    
+    
+ 
+ });
+
+
+
+
+
 //login
 
 router.post('/login', async (req,res) => {
