@@ -116,5 +116,45 @@ router.get('/getenableitems' ,async (req,res) => {
    
 });
 
+router.get('/getviewmoreitems' ,async (req,res) => {
+
+    const id = req.query.id;
+    
+ 
+    
+        try{
+           
+
+            const item = await itemModel.find({_id:id});
+            res.status(200).json(item)
+    
+        }catch(err){
+            res.status(404).json({message:err})
+        }
+    
+    
+   
+});
+
+router.get('/searchitems' ,async (req,res) => {
+
+    const text = req.query.text;
+    
+ 
+    
+        try{
+           
+
+            const item = await itemModel.find({$and:[{name:{ $regex: text, $options: "i" }}, {status:true} ]});
+            res.status(200).json(item)
+    
+        }catch(err){
+            res.status(404).json({message:err})
+        }
+    
+    
+   
+});
+
 
 module.exports = router

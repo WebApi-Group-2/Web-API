@@ -155,7 +155,7 @@ router.put('/updateitemqty/:id', verifytoken,async (req,res) => {
       
         //sent respnse to client
       }).catch(err => {
-        console.log('Oh! Dark')
+        return res.status(404).json({message:"something went wrong"});
       });
     return res.status(200).json({message: "UpdateSuccess"});
 
