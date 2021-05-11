@@ -33,6 +33,10 @@ const OrderSchema =  new mongoose.Schema({
         default : Date.now
     },
 
+    orderNo: {
+        type : Number    
+    },
+
     itemdetails : [
         {
             itemId: {

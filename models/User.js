@@ -34,6 +34,11 @@ const UserSchema =  new mongoose.Schema({
     date: {
         type : Date,
         default : Date.now
+    },
+    
+    uid: {
+        type:Number,
+        required:true
     }
 
 })
