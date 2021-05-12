@@ -66,6 +66,76 @@ router.get('/getorders' ,async (req,res) => {
    
 });
 
+//Mevan's code start
+router.get('/getOrderStat',async(req,res)=>{
+    try{
+        let orderStats= await order.aggregate( [
+            {
+              $group: {
+                 _id: {
+                    
+                    date: { $dateToString: {
+                       format: "%Y-%m-%d",
+                       date: "$date"
+                    }}
+                 },
+                 TotalAmount: { $sum: "$TotalAmount" }
+              }
+            },
+            { $sort: { TotalAmount: 1 } }
+         ] )
+
+         res.json(orderStats);
+    }
+    catch(ex){
+        return res.status(500).send("error",ex.message);
+    }
+});
+
+
+router.get('/getallpaidOrders',async(req,res)=>{
+
+    try{
+        let orders= await order.find({Status:1});
+        res.json(orders);
+    }catch(ex){
+        return res.status(500).send("error",ex.message);
+    }
+
+});
+
+router.get('/getNewOrderCount',async(req,res)=>{
+
+    try{
+        let orders= await order.find({Status:1}).countDocuments();
+        res.json(orders);
+    }catch(ex){
+        return res.status(500).send("error",ex.message);
+    }
+
+});
+
+router.put("/updateStatus/:id",async (req,res)=>{
+    let reqID=req.params.id
+    try{
+        let order= await Order.findByIdAndUpdate(reqID,{
+            Status:req.body.Status,
+            
+        });
+    
+        if(!order){
+            return res.status(404).send("no such Item")
+        }
+        
+        return res.send("Item updated successfully");
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
+    
+
+});
+//Mevan's code end
 
 router.get('/getselectedorder' ,async (req,res) => {
 
