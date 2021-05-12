@@ -40,16 +40,10 @@ router.post('/register',async (req,res) => {
  
  });
 
-
-
-
-
 //login
 
 router.post('/login', async (req,res) => {
 
- 
-     
     const emailExitst = await User.findOne({email:req.body.email})
 
    if(!emailExitst) return res.json({message:"email or password invalid"});
@@ -63,11 +57,26 @@ router.post('/login', async (req,res) => {
   //token create
   const token = jwt.sign({_id: emailExitst._id},process.env.TOKEN_SECRET)
 
-
-
   return res.json({message: "successfully login",Token:token,IsAdmin:emailExitst.IsAdmin,UserId:emailExitst._id})
 
 });
 
+
+router.put("/psw_reset/:id", async(req, res) =>{
+  console.log("accesseed succeesews")
+  let reqID = req.params.id
+  let user = await User.findByIdAndUpdate(reqID,{
+    password:req.body.password
+    
+  })
+
+  
+
+  if(!user){
+    return res.status(404).send("no such Item")
+}
+return res.send("Item updated successfully");
+
+});
 
 module.exports = router
