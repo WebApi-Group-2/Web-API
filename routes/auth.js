@@ -61,16 +61,19 @@ router.post('/login', async (req,res) => {
 
 });
 
-
+// chanaka updated
 router.put("/psw_reset/:id", async(req, res) =>{
   console.log("accesseed succeesews")
   let reqID = req.params.id
-  let user = await User.findByIdAndUpdate(reqID,{
-    password:req.body.password
-    
-  })
 
-  
+ //password hash
+ const bcri = await bcript.genSalt(10);
+ const hashpassword = await bcript.hashSync(req.body.password,bcri);
+
+  let user = await User.findByIdAndUpdate(reqID,{
+    password:hashpassword
+
+  })
 
   if(!user){
     return res.status(404).send("no such Item")
@@ -78,5 +81,5 @@ router.put("/psw_reset/:id", async(req, res) =>{
 return res.send("Item updated successfully");
 
 });
-
+// end of chanaka updated
 module.exports = router
