@@ -61,7 +61,7 @@ router.post('/login', async (req,res) => {
 
 });
 
-// chanaka updated
+// chanaka created password reset
 router.put("/psw_reset/:id", async(req, res) =>{
   console.log("accesseed succeesews")
   let reqID = req.params.id
@@ -72,7 +72,6 @@ router.put("/psw_reset/:id", async(req, res) =>{
 
   let user = await User.findByIdAndUpdate(reqID,{
     password:hashpassword
-
   })
 
   if(!user){
