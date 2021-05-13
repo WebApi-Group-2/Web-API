@@ -16,6 +16,15 @@ router.get("/getall",async (req,res)=>{
 });
 
 router.post('/add',async (req,res) => {
+
+    if(!req.body.name)
+    {
+        return res.status(400).send("name is empty");
+    }
+    if(!req.body.catId)
+    {
+        return res.status(400).send("catId is empty");
+    }
      
     let categoryData = new categoryModel({
         name:req.body.name,
@@ -39,6 +48,7 @@ router.post('/add',async (req,res) => {
 
 router.put("/:id",async (req,res)=>{
     let reqID=req.params.id
+    try{
     let item= await categoryModel.findByIdAndUpdate(reqID,{
         name:req.body.name,
         catId:req.body.catId,
@@ -46,39 +56,48 @@ router.put("/:id",async (req,res)=>{
     });
 
     if(!item){
-        return res.status(404).send("no such Item")
+        return res.status(404).send("no such Category")
     }
-    // avenger.set({likeCount: req.body.likeCount});
-    // avenger=await avenger.save();
-    return res.send("Item updated successfully");
-
+    
+    return res.send("Category updated successfully");
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
 });
 
 
-router.get("/find",async(req,res)=>{
+router.get("/:id",async(req,res)=>{
     
-    let reqID=req.body.id
-    let category=categoryModel.find({_id: reqID});
+    let reqID=req.params.id
+    try{
+    let category=await categoryModel.findById(reqID);
     
     if(!category){
-        return res.status(404).send("No such item")
+        return res.status(404).send("No such Category")
     }
-    res.json(category)
-
+    res.send(category)
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
   
 });
 
 router.delete("/:id",async(req,res)=>{
     let reqID=req.params.id
+    try{
     let category=await categoryModel.findByIdAndDelete(reqID);
     if(!category){
         return res.status(404).json("no such item")
     }
-    // let indexofitem=itemModel.indexOf(item);
-    // itemModel.splice(indexofitem,1);
+    
 
     res.json(category);
-
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
 });
 
 

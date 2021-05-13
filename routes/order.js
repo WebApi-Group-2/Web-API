@@ -120,10 +120,10 @@ router.put("/updateStatus/:id",async (req,res)=>{
         });
     
         if(!order){
-            return res.status(404).send("no such Item")
+            return res.status(404).send("no such Order")
         }
         
-        return res.send("Item updated successfully");
+        return res.send("Order updated successfully");
     }
     catch(err){
         return res.status(500).send("error",err.message);
