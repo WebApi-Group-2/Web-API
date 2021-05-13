@@ -43,44 +43,54 @@ router.post('/add',async (req,res) => {
 
 router.put("/:id",async (req,res)=>{
     let reqID=req.params.id
+    try{
     let user= await userModel.findByIdAndUpdate(reqID,{
         IsAdmin:req.body.IsAdmin,
         
     });
 
     if(!user){
-        return res.status(404).send("no such Item")
+        return res.status(404).send("no such User")
     }
-    // avenger.set({likeCount: req.body.likeCount});
-    // avenger=await avenger.save();
-    return res.send("Item updated successfully");
-
+    
+    return res.send("User updated successfully");
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
 });
 
 router.get("/find",async(req,res)=>{
     
     let reqID=req.body.id
+    try{
     let user=userModel.find({_id: reqID});
     
     if(!user){
-        return res.status(404).json("No such item")
+        return res.status(404).json("No such User")
     }
     res.json(user)
-
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
   
 });
 
 router.delete("/:id",async(req,res)=>{
     let reqID=req.params.id
+    try{
     let user=await userModel.findByIdAndDelete(reqID);
     if(!user){
-        return res.status(404).send("no such item")
+        return res.status(404).send("no such User")
     }
-    // let indexofitem=itemModel.indexOf(item);
-    // itemModel.splice(indexofitem,1);
+   
 
     res.send(user);
-
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
 });
 
 
