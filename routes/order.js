@@ -56,16 +56,82 @@ router.get('/getorders' ,async (req,res) => {
             res.status(200).json(order)
     
         }catch(err){
-            res.status(404).json({message:err})
+            res.status(500).json({message:err})
         }
-    
-
-    
-     
     
    
 });
 
+//Mevan's code start
+router.get('/getOrderStat',async(req,res)=>{
+    try{
+        let orderStats= await order.aggregate( [
+            {
+              $group: {
+                 _id: {
+                    
+                    date: { $dateToString: {
+                       format: "%Y-%m-%d",
+                       date: "$date"
+                    }}
+                 },
+                 TotalAmount: { $sum: "$TotalAmount" }
+              }
+            },
+            { $sort: { TotalAmount: 1 } }
+         ] )
+
+         res.json(orderStats);
+    }
+    catch(ex){
+        return res.status(500).send("error",ex.message);
+    }
+});
+
+
+router.get('/getallpaidOrders',async(req,res)=>{
+
+    try{
+        let orders= await order.find({Status:1});
+        res.json(orders);
+    }catch(ex){
+        return res.status(500).send("error",ex.message);
+    }
+
+});
+
+router.get('/getNewOrderCount',async(req,res)=>{
+
+    try{
+        let orders= await order.find({Status:1}).countDocuments();
+        res.json(orders);
+    }catch(ex){
+        return res.status(500).send("error",ex.message);
+    }
+
+});
+
+router.put("/updateStatus/:id",async (req,res)=>{
+    let reqID=req.params.id
+    try{
+        let order= await Order.findByIdAndUpdate(reqID,{
+            Status:req.body.Status,
+            
+        });
+    
+        if(!order){
+            return res.status(404).send("no such Order")
+        }
+        
+        return res.send("Order updated successfully");
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
+    
+
+});
+//Mevan's code end
 
 router.get('/getselectedorder' ,async (req,res) => {
 
@@ -74,13 +140,21 @@ router.get('/getselectedorder' ,async (req,res) => {
  
     
         try{
-            const verify = jwt.verify(token,process.env.TOKEN_SECRET);
+            if(OrderId == "")
+            {
+                res.status(404).json({message:"Order Id required"});
+            }
+            else
+            {
+                const verify = jwt.verify(token,process.env.TOKEN_SECRET);
 
-            const order = await Order.find({_id: OrderId});
-            res.status(200).json(order)
+                const order = await Order.find({_id: OrderId});
+                res.status(200).json(order);
+            }
+            
     
         }catch(err){
-            res.status(404).json({message:err})
+            res.status(500).json({message:err})
         }
     
      
@@ -97,14 +171,25 @@ router.get('/getitemqty' ,async (req,res) => {
  
     
         try{
-            const verify = jwt.verify(token,process.env.TOKEN_SECRET);
 
-            const order = await Order.find({"itemdetails._id": itemid}).sort({AddressShiping:"asc"}).select({itemdetails:1});
+            if(itemid == "")
+            {
+                res.status(404).json({message:"item Id required"});
+            }
+            else
+            {
+
+                const verify = jwt.verify(token,process.env.TOKEN_SECRET);
+
+                const order = await Order.find({"itemdetails._id": itemid}).sort({AddressShiping:"asc"}).select({itemdetails:1});
            
-            res.status(200).json(order)
+                res.status(200).json(order)
+
+            }
+            
     
         }catch(err){
-            res.status(404).json({message:err})
+            res.status(500).json({message:err})
         }
 
 
@@ -120,19 +205,31 @@ router.put('/updateaddress/:id', verifytoken,async (req,res) => {
     let id = req.params.id;
 
     try{
-        const order = await Order.findById(id);
-
-        if(!order) {
-            return res.status(404).json({message:"Cannot find this order"})
+      
+        if(id =="")
+        {
+            res.status(404).json({message:" Id required"});
         }
+        else
+        {
+
+            const order = await Order.findById(id);
+
+            if(!order) {
+            return res.status(404).json({message:"Cannot find this order"})
+            }
     
-        order.set({AddressShiping: req.body.AddressShiping});
-        order.save();
-        return res.status(200).json(order);
+            order.set({AddressShiping: req.body.AddressShiping});
+            order.save();
+            return res.status(200).json(order);
+
+        }
+
+        
 
     }catch(err)
     {
-        return res.status(404).json({message:"something went wrong"});
+        return res.status(500).json({message:"something went wrong"});
     }
 
    
@@ -146,18 +243,37 @@ router.put('/updateitemqty/:id', verifytoken,async (req,res) => {
 
     let id = req.params.id;
 
-   let order = Order.findOne({"itemdetails._id": id}).then(doc => {
-        item = doc.itemdetails.id(id);
-        item["qty"] = req.body.qty;
-       
-       
-        doc.save();
-      
-        //sent respnse to client
-      }).catch(err => {
-        return res.status(404).json({message:"something went wrong"});
-      });
-    return res.status(200).json({message: "UpdateSuccess"});
+    if(id == "")
+    {
+        return res.status(404).json({message:"Id required"});
+    }
+    else
+    {
+
+        if(req.body.qty == "")
+        {
+            return res.status(404).json({message:"Qty required"});
+        }
+        else
+        {
+
+            let order = Order.findOne({"itemdetails._id": id}).then(doc => {
+                item = doc.itemdetails.id(id);
+                item["qty"] = req.body.qty;
+               
+               
+                doc.save();
+              
+                //sent respnse to client
+              }).catch(err => {
+                return res.status(500).json({message:"something went wrong"});
+              });
+            return res.status(200).json({message: "UpdateSuccess"});
+
+        }
+    }
+
+   
 
 
 });
