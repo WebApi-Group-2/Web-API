@@ -124,12 +124,19 @@ router.get('/getviewmoreitems' ,async (req,res) => {
     
         try{
            
-
-            const item = await itemModel.find({_id:id});
-            res.status(200).json(item)
+            if(id == "")
+            {
+                res.status(404).json({message:"Id is required"});
+            }
+            else
+            {
+                const item = await itemModel.find({_id:id});
+                res.status(200).json(item)
+            }
+            
     
         }catch(err){
-            res.status(404).json({message:err})
+            res.status(500).json({message:err})
         }
     
     
@@ -149,7 +156,7 @@ router.get('/searchitems' ,async (req,res) => {
             res.status(200).json(item)
     
         }catch(err){
-            res.status(404).json({message:err})
+            res.status(500).json({message:err})
         }
     
     
