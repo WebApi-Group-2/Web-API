@@ -17,7 +17,26 @@ router.get("/getall",async (req,res)=>{
 
 router.post('/add',async (req,res) => {
 
-    
+    if(!req.body.name)
+    {
+        return res.status(400).send("name is empty");
+    }
+    if(!req.body.itemId)
+    {
+        return res.status(400).send("itemId is empty");
+    }
+    if(!req.body.catID)
+    {
+        return res.status(400).send("catID is empty");
+    }
+    if(!req.body.uPrice)
+    {
+        return res.status(400).send("uPrice is empty");
+    }
+    if(!req.body.uPrice)
+    {
+        return res.status(400).send("uPrice is empty");
+    }
      
     let itemData = new itemModel({
         name:req.body.name,
@@ -46,21 +65,26 @@ router.post('/add',async (req,res) => {
 
 
 
-router.get("/find",async(req,res)=>{
+router.get("/:id",async(req,res)=>{
     
-    let reqID=req.body.id
-    let item=itemModel.find({_id: reqID});
+    let reqID=req.params.id
+    try{
+    let item=await itemModel.findById(reqID);
     
     if(!item){
-        return res.status(404).send("No such item")
+        return res.status(404).send("No such Item")
     }
-    res.json(item)
-
+    res.send(item)
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
   
 });
 
 router.put("/:id",async (req,res)=>{
     let reqID=req.params.id
+    try{
     let item= await itemModel.findByIdAndUpdate(reqID,{
         name:req.body.name,
         itemId:req.body.itemId,
@@ -76,23 +100,28 @@ router.put("/:id",async (req,res)=>{
     if(!item){
         return res.status(404).send("no such Item")
     }
-    // avenger.set({likeCount: req.body.likeCount});
-    // avenger=await avenger.save();
+    
     return res.send("Item updated successfully");
-
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
 });
 
 router.delete("/:id",async(req,res)=>{
     let reqID=req.params.id
+    try{
     let item=await itemModel.findByIdAndDelete(reqID);
     if(!item){
         return res.status(404).send("no such item")
     }
-    // let indexofitem=itemModel.indexOf(item);
-    // itemModel.splice(indexofitem,1);
+    
 
     res.json(item);
-
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
 });
 
 
