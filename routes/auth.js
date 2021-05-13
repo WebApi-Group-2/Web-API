@@ -173,8 +173,7 @@ router.put("/psw_reset/:id", async(req, res) =>{
  const hashpassword = await bcript.hashSync(req.body.password,bcri);
 
 
-module.exports = router
-=======
+
   let user = await User.findByIdAndUpdate(reqID,{
     password:hashpassword
   })
@@ -187,3 +186,5 @@ return res.send("Item updated successfully");
 });
 // end of chanaka updated
 
+
+module.exports = router
