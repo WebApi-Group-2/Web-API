@@ -123,6 +123,7 @@ router.post('/register',async (req,res) => {
      const hashpassword = await bcript.hashSync(req.body.password,bcri);
  
      const user = new User({
+         uid : req.body.uid,
          name : req.body.name,
          email : req.body.email,
          IsAdmin: req.body.IsAdmin,
@@ -141,16 +142,10 @@ router.post('/register',async (req,res) => {
  
  });
 
-
-
-
-
 //login
 
 router.post('/login', async (req,res) => {
 
- 
-     
     const emailExitst = await User.findOne({email:req.body.email})
 
    if(!emailExitst) return res.json({message:"email or password invalid"});
@@ -164,11 +159,31 @@ router.post('/login', async (req,res) => {
   //token create
   const token = jwt.sign({_id: emailExitst._id},process.env.TOKEN_SECRET)
 
-
-
   return res.json({message: "successfully login",Token:token,IsAdmin:emailExitst.IsAdmin,UserId:emailExitst._id})
 
 });
 
+// chanaka created password reset
+router.put("/psw_reset/:id", async(req, res) =>{
+  console.log("accesseed succeesews")
+  let reqID = req.params.id
+
+ //password hash
+ const bcri = await bcript.genSalt(10);
+ const hashpassword = await bcript.hashSync(req.body.password,bcri);
+
 
 module.exports = router
+=======
+  let user = await User.findByIdAndUpdate(reqID,{
+    password:hashpassword
+  })
+
+  if(!user){
+    return res.status(404).send("no such Item")
+}
+return res.send("Item updated successfully");
+
+});
+// end of chanaka updated
+
