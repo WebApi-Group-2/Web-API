@@ -46,16 +46,20 @@ router.post('/add',async (req,res) => {
 
 
 
-router.get("/find",async(req,res)=>{
+router.get("/:id",async(req,res)=>{
     
-    let reqID=req.body.id
-    let item=itemModel.find({_id: reqID});
+    let reqID=req.params.id
+    try{
+    let item=await itemModel.findById(reqID);
     
     if(!item){
-        return res.status(404).send("No such item")
+        return res.status(404).send("No such Item")
     }
-    res.json(item)
-
+    res.send(item)
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
   
 });
 

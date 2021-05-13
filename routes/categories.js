@@ -55,16 +55,20 @@ router.put("/:id",async (req,res)=>{
 });
 
 
-router.get("/find",async(req,res)=>{
+router.get("/:id",async(req,res)=>{
     
-    let reqID=req.body.id
-    let category=categoryModel.find({_id: reqID});
+    let reqID=req.params.id
+    try{
+    let category=await categoryModel.findById(reqID);
     
     if(!category){
-        return res.status(404).send("No such item")
+        return res.status(404).send("No such Category")
     }
-    res.json(category)
-
+    res.send(category)
+    }
+    catch(err){
+        return res.status(500).send("error",err.message);
+    }
   
 });
 
