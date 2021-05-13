@@ -65,7 +65,7 @@ router.post('/add',async (req,res) => {
 
 
 
-router.get("/:id",async(req,res)=>{
+router.get("/find/:id",async(req,res)=>{
     
     let reqID=req.params.id
     try{
