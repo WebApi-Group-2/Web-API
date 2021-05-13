@@ -27,8 +27,7 @@ const UserSchema =  new mongoose.Schema({
     IsAdmin : {
         type : Number,
         required : true
-        
-
+    
     },
 
     date: {
