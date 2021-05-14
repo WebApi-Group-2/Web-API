@@ -5,41 +5,29 @@ const router = express.Router();
 const Order = require('../models/order');
 const verifytoken = require('../tokenVerify');
 
-
-
 //add order
-
 router.post('/add', verifytoken,async (req,res) => {
     
+    //get the token
     const token = req.body.Token;
     const verify = jwt.verify(token,process.env.TOKEN_SECRET);
-     
+
+    //insert data as a object 
     const order = new Order ({
         userId : verify._id,
+        orderNo: req.body.orderNo,
         TotalAmount : req.body.TotalAmount,
         itemdetails: req.body.itemdetails,
         AddressShiping: req.body.AddressShiping,
-      
     })
 
-   try{
-   const savedone = await order.save()
-    
-   res.status(200).json(savedone);
-
-   
-   
-
-    
-   } catch(err) {
-
-       res.status(404).json({message: err});
-   }
-
-
-  
-    
-   
+    //save data to database
+    try{
+    const savedone = await order.save()
+    res.status(200).json(savedone);
+    } catch(err) {
+        res.status(404).json({message: err});
+    }  
 });
 
 
