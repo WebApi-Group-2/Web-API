@@ -27,13 +27,17 @@ const UserSchema =  new mongoose.Schema({
     IsAdmin : {
         type : Number,
         required : true
-        
-
+    
     },
 
     date: {
         type : Date,
         default : Date.now
+    },
+    
+    uid: {
+        type:Number,
+        required:true
     }
 
 })
