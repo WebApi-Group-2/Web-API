@@ -164,5 +164,27 @@ router.post('/login', async (req,res) => {
 
 });
 
+// chanaka created password reset
+router.put("/psw_reset/:id", async(req, res) =>{
+    console.log("accesseed succeesews")
+    let reqID = req.params.id
+  
+   //password hash
+   const bcri = await bcript.genSalt(10);
+   const hashpassword = await bcript.hashSync(req.body.password,bcri);
+
+    let user = await User.findByIdAndUpdate(reqID,{
+      password:hashpassword
+    })
+  
+    if(!user){
+      return res.status(404).send("no such Item")
+  }
+  return res.send("Item updated successfully");
+  
+  });
+  // end of chanaka updated
+  
+
 
 module.exports = router
