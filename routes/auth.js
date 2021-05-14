@@ -7,9 +7,41 @@ const {OAuth2Client} = require('google-auth-library');
 const { response } = require('express');
 const client = new OAuth2Client("212464559860-30tq5g85gv1pjfhkd172iagcuud1a8e6.apps.googleusercontent.com")
 const fetch = require('node-fetch');
+// add methods here 
+//Registration
+
+router.post('/register',async (req,res) => {
+
+    //check user already exits
+ 
+    const emailExitst = await User.findOne({email:req.body.email})
+ 
+    if(emailExitst) return res.status(400).json({message:"email already exits"})
+     
+     //password hash
+     const bcri = await bcript.genSalt(10);
+     const hashpassword = await bcript.hashSync(req.body.password,bcri);
+ 
+     const user = new User({
+         uid : req.body.uid,
+         name : req.body.name,
+         email : req.body.email,
+         IsAdmin: req.body.IsAdmin,
+         password : hashpassword
+     });
+      
+     try {
+         const saveduser = await user.save()
+         res.json(saveduser);
+ 
+     }catch(err) {
+         res.status(400).json(err);
+     }
+
+ });
 
 
-router.post('./facebooklogin' , async = (req,res) => {
+ router.post('./facebooklogin' , async = (req,res) => {
     const {userID, accessToken} = req.body;
 
     let urlGraphFacebook = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_tokens=${accessToken}`
@@ -105,47 +137,16 @@ router.post('./googlelogin' , async = (req, res) => {
     console.log()
 });
 
-// add methods here 
-
-//Registration
 
 
-router.post('/register',async (req,res) => {
 
-    //check user already exits
- 
-    const emailExitst = await User.findOne({email:req.body.email})
- 
-    if(emailExitst) return res.status(400).json({message:"email already exits"})
-     
-     //password hash
-     const bcri = await bcript.genSalt(10);
-     const hashpassword = await bcript.hashSync(req.body.password,bcri);
- 
-     const user = new User({
-         uid : req.body.uid,
-         name : req.body.name,
-         email : req.body.email,
-         IsAdmin: req.body.IsAdmin,
-         password : hashpassword
-     });
-      
-     try {
-         const saveduser = await user.save()
-         res.json(saveduser);
- 
-     }catch(err) {
-         res.status(400).json(err);
-     }
-    
-    
- 
- });
 
 //login
 
 router.post('/login', async (req,res) => {
 
+ 
+     
     const emailExitst = await User.findOne({email:req.body.email})
 
    if(!emailExitst) return res.json({message:"email or password invalid"});
@@ -162,29 +163,6 @@ router.post('/login', async (req,res) => {
   return res.json({message: "successfully login",Token:token,IsAdmin:emailExitst.IsAdmin,UserId:emailExitst._id})
 
 });
-
-// chanaka created password reset
-router.put("/psw_reset/:id", async(req, res) =>{
-  console.log("accesseed succeesews")
-  let reqID = req.params.id
-
- //password hash
- const bcri = await bcript.genSalt(10);
- const hashpassword = await bcript.hashSync(req.body.password,bcri);
-
-
-
-  let user = await User.findByIdAndUpdate(reqID,{
-    password:hashpassword
-  })
-
-  if(!user){
-    return res.status(404).send("no such Item")
-}
-return res.send("Item updated successfully");
-
-});
-// end of chanaka updated
 
 
 module.exports = router
